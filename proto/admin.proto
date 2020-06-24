@@ -1,0 +1,121 @@
+syntax = "proto3";
+import "github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/google/api/annotations.proto";
+import "common.proto";
+option go_package = "git.samberi.com/dois/delivery_api/proto/gen";
+
+package admin;
+
+message GetAllOrdersResponse {
+    common.PaginateMessage paginate = 1;
+    repeated common.OrderMessage data = 2;
+}
+
+message GetAllUsersResponse {
+    common.PaginateMessage paginate = 1;
+    repeated common.UserMessage data = 2;
+}
+
+message UserTypeMessage {
+    int64 code = 1;
+    string name = 2;
+}
+
+message UserTypesResponse {
+    repeated UserTypeMessage userTypes = 1;
+}
+
+message CreateUserRequest {
+    message Body {
+        string firstName = 1;
+        string lastName = 2;
+        string userName = 3;
+        string password = 4;
+        string email = 5;
+        string phone = 6;
+        repeated int64 userTypes = 7;
+    }
+    Body body = 1;
+}
+
+message UpdateUserRequest {
+    string userUID = 1;
+    CreateUserRequest.Body body = 2;
+}
+
+message DeleteUserRequest {
+    string userUID = 1;
+}
+
+message SetOrderUserRequest {
+    string orderUID = 1;
+    string userUID = 2;
+}
+
+message PermissionMessage {
+    int32 id = 1;
+    int32 contentTypeID = 2;
+    int32 Access = 3;
+    string name = 4;
+}
+
+message RoleMessage {
+    int32 id = 1;
+    string name = 2;
+    repeated PermissionMessage permissions = 3;
+    repeated common.UserMessage users = 4;
+}
+
+message RolesResponse {
+    repeated RoleMessage roles = 1;
+}
+
+service Admin {
+    rpc GetRoles(common.PaginateRequest) returns (RolesResponse) {
+        option (google.api.http) = {
+            get: "/admin/all-roles"
+        };
+    }
+    rpc GetAllOrders(common.PaginateRequest) returns (GetAllOrdersResponse) {
+        option (google.api.http) = {
+            get: "/admin/all-orders"
+        };
+    }
+    rpc GetAllUsers(common.PaginateRequest) returns (GetAllUsersResponse) {
+        option (google.api.http) = {
+            get: "/admin/all-users"
+        };
+    }
+    rpc CreateUser(CreateUserRequest) returns (common.UserMessage) {
+        option (google.api.http) = {
+            post: "/admin/user/create"
+            body: "body"
+        };
+    }
+    rpc UpdateUser(UpdateUserRequest) returns (common.UserMessage) {
+        option (google.api.http) = {
+            put: "/admin/user/{userUID}"
+            body: "body"
+        };
+    }
+    rpc DeleteUser(DeleteUserRequest) returns (common.SimpleMessage) {
+        option (google.api.http) = {
+            delete: "/admin/user/{userUID}"
+        };
+    }
+    rpc SetOrderUser(SetOrderUserRequest) returns (common.OrderMessage) {
+        option (google.api.http) = {
+            post: "/admin/set-order-to-user"
+        };
+    }
+    rpc Login(common.LoginRequest) returns (common.UserMessage) {
+        option (google.api.http) = {
+            post: "/admin/login"
+            body: "body"
+        };
+    }
+    rpc UserTypes(common.EmptyRequest) returns (UserTypesResponse) {
+        option (google.api.http) = {
+            get: "/admin/user-types"
+        };
+    }
+}

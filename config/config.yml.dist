@@ -1,0 +1,54 @@
+database:
+  DATABASE: delivery_api
+  HOST:     127.0.0.1
+  PORT:     5432
+  USER:     username
+  PASSWORD: 123123
+
+system:
+  APP_NAME:       delivery_api
+  DEBUG:          true
+  GRPC_SERVER:    0.0.0.0:8888
+  HTTP_SERVER:    0.0.0.0:8083
+  SECRET_KEY:     f!yu%Kc_X&_DDYt$X=AE!e*_2qsC9*2F#B%RE#SEv%%rB#RAn#QkAFBcHRB8zJCs
+  LOG_PATH:       /home/username/logs/delivery_api.log
+  MEM_PROFILER:   /home/username/logs/delivery_api.prof
+
+session:
+  KEY:      4h3uQxEtkMUPFSZ8VEDUkLQKyEZZY9Ct
+  MAX_AGE:  86400
+
+admins:
+  - NAME:   Александр Проценко
+    EMAIL:  protsenko.a@samberi.com
+
+email:
+  NAME:     "Самбери Интернет Магазин - Доставка"
+  FROM:     rbs-mail@samberi.com
+  HOST:     mail.samberi.com
+  PORT:     25
+  USER:     rbs-mail
+  PASSWORD:
+
+static:
+  STATIC_ROOT:  /home/username/web/static/delivery_api
+  MEDIA_ROOT:   /home/username/web/media/delivery_api
+
+sms:
+  URL:      https://sms4b.ru/ws/sms.asmx/SendSMS
+  LOGIN:    samberi
+  PASSWORD:
+  SOURCE:   Samberi.com
+
+firebase:
+  CERT_PATH: /home/username/firebase-adminsdk.json
+
+payment_service:
+  SERVER: http://10.21.3.38:8100
+  METHODS:
+    CREATE_ORDER: /createorder
+    CHECK_STATUS: /checkstatus
+    REFUND_PAY: /refundpay
+    CONFIRM_ORDER: /confirmorder
+  LOGIN: alva-test
+  PASSWORD: test-oplata-alva

@@ -1,0 +1,93 @@
+syntax = "proto3";
+import "github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/google/api/annotations.proto";
+import "common.proto";
+option go_package = "git.samberi.com/dois/delivery_api/proto/gen";
+
+package deliveryman;
+
+
+message GetOrdersResponse {
+    repeated common.OrderMessage orders = 1;
+}
+
+message NotificationTokenRequest {
+    message Body {
+        string deviceUID = 1;
+        string notificationToken = 2;
+    }
+    Body body = 1;
+}
+
+message ChangeOrderStatusRequest {
+    message Body {
+        int32 status = 1;
+    }
+    string orderUID = 1;
+    Body body = 2;
+}
+
+message ConfirmOrderRequest {
+    message Body {
+        message Product {
+            string UID = 1;
+            int32 count = 2;
+            repeated Product replacements = 3;
+        }
+        repeated Product products = 1;
+    }
+    string orderUID = 1;
+    Body body = 2;
+}
+
+message GetOrderRequest {
+    string orderUID = 1;
+}
+
+service Api {
+    rpc RequestTwoFactAuth(common.RequestTwoFactAuthMessage) returns (common.SimpleMessage) {
+        option (google.api.http) = {
+            post: "/deliveryman/request-auth"
+            body: "body"
+        };
+    }
+    rpc ConfirmTwoFactAuth(common.ConfirmTwoFactAuthMessage) returns (common.UserMessage) {
+        option (google.api.http) = {
+            post: "/deliveryman/confirm-auth"
+            body: "body"
+        };
+    }
+    rpc Login(common.LoginRequest) returns (common.UserMessage) {
+        option (google.api.http) = {
+            post: "/deliveryman/login"
+            body: "body"
+        };
+    }
+    rpc GetOrders(common.EmptyRequest) returns (GetOrdersResponse) {
+        option (google.api.http) = {
+            get: "/deliveryman/orders"
+        };
+    }
+    rpc GetOrder(GetOrderRequest) returns (common.OrderMessage) {
+        option (google.api.http) = {
+            get: "/deliveryman/order/{orderUID}"
+        };
+    }
+    rpc SetNotificationToken(NotificationTokenRequest) returns (common.SimpleMessage) {
+        option (google.api.http) = {
+            post: "/deliveryman/set-notification-token"
+            body: "body"
+        };
+    }
+    rpc ConfirmOrder(ConfirmOrderRequest) returns (common.OrderMessage) {
+        option (google.api.http) = {
+            post: "/deliveryman/order/confirm/{orderUID}"
+            body: "body"
+        };
+    }
+    rpc ChangeOrderStatus(ChangeOrderStatusRequest) returns (common.OrderMessage) {
+        option (google.api.http) = {
+            post: "/deliveryman/order/change-status/{orderUID}"
+            body: "body"
+        };
+    }
+}
